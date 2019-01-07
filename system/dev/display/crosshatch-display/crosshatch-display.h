@@ -1,4 +1,4 @@
-// Copyright 2018 The Fuchsia Authors. All rights reserved.
+// Copyright 2019 The Fuchsia Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -21,16 +21,18 @@
 #include <fbl/mutex.h>
 #include <fbl/unique_ptr.h>
 
-namespace dummy_display {
+// based on dummy_display.h
 
-class DummyDisplay;
+namespace crosshatch_display {
 
-using DeviceType = ddk::Device<DummyDisplay, ddk::Unbindable>;
+class CrosshatchDisplay;
 
-class DummyDisplay : public DeviceType,
-                     public ddk::DisplayControllerImplProtocol<DummyDisplay, ddk::base_protocol> {
+using DeviceType = ddk::Device<CrosshatchDisplay, ddk::Unbindable>;
+
+class CrosshatchDisplay : public DeviceType,
+                     public ddk::DisplayControllerImplProtocol<CrosshatchDisplay, ddk::base_protocol> {
 public:
-    DummyDisplay(zx_device_t* parent)
+    CrosshatchDisplay(zx_device_t* parent)
         : DeviceType(parent) {}
 
     // This function is called from the c-bind function upon driver matching
@@ -74,4 +76,4 @@ private:
     ddk::DisplayControllerInterfaceClient dc_intf_ TA_GUARDED(display_lock_);
 };
 
-} // namespace dummy_display
+} // namespace crosshatch_display

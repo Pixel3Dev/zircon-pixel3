@@ -1,13 +1,13 @@
-// Copyright 2018 The Fuchsia Authors. All rights reserved.
+// Copyright 2019 The Fuchsia Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "dummy-display.h"
+#include "crosshatch-display.h"
 #include <ddk/binding.h>
 #include <ddk/platform-defs.h>
 #include <fbl/auto_call.h>
 
-namespace dummy_display {
+namespace crosshatch_display {
 #define DISP_ERROR(fmt, ...) zxlogf(ERROR, "[%s %d]" fmt, __func__, __LINE__, ##__VA_ARGS__)
 
 namespace {
@@ -22,7 +22,7 @@ constexpr uint64_t kDisplayId = 1;
 constexpr uint32_t kRefreshRateFps = 60;
 } // namespace
 
-void DummyDisplay::PopulateAddedDisplayArgs(added_display_args_t* args) {
+void CrosshatchDisplay::PopulateAddedDisplayArgs(added_display_args_t* args) {
     args->display_id = kDisplayId;
     args->edid_present = false;
     args->panel.params.height = kHeight;
@@ -34,13 +34,13 @@ void DummyDisplay::PopulateAddedDisplayArgs(added_display_args_t* args) {
 }
 
 // part of ZX_PROTOCOL_DISPLAY_CONTROLLER_IMPL ops
-uint32_t DummyDisplay::DisplayControllerImplComputeLinearStride(uint32_t width,
+uint32_t CrosshatchDisplay::DisplayControllerImplComputeLinearStride(uint32_t width,
                                                                 zx_pixel_format_t format) {
     return ROUNDUP(width, 32 / ZX_PIXEL_FORMAT_BYTES(format));
 }
 
 // part of ZX_PROTOCOL_DISPLAY_CONTROLLER_IMPL ops
-void DummyDisplay::DisplayControllerImplSetDisplayControllerInterface(
+void CrosshatchDisplay::DisplayControllerImplSetDisplayControllerInterface(
     const display_controller_interface_t* intf) {
     fbl::AutoLock lock(&display_lock_);
     dc_intf_ = ddk::DisplayControllerInterfaceClient(intf);
@@ -50,7 +50,7 @@ void DummyDisplay::DisplayControllerImplSetDisplayControllerInterface(
 }
 
 // part of ZX_PROTOCOL_DISPLAY_CONTROLLER_IMPL ops
-zx_status_t DummyDisplay::DisplayControllerImplImportVmoImage(image_t* image, zx::vmo vmo,
+zx_status_t CrosshatchDisplay::DisplayControllerImplImportVmoImage(image_t* image, zx::vmo vmo,
                                                               size_t offset) {
     zx_status_t status = ZX_OK;
 
@@ -66,12 +66,12 @@ zx_status_t DummyDisplay::DisplayControllerImplImportVmoImage(image_t* image, zx
 }
 
 // part of ZX_PROTOCOL_DISPLAY_CONTROLLER_IMPL ops
-void DummyDisplay::DisplayControllerImplReleaseImage(image_t* image) {
+void CrosshatchDisplay::DisplayControllerImplReleaseImage(image_t* image) {
     free(reinterpret_cast<void*>(image->handle));
 }
 
 // part of ZX_PROTOCOL_DISPLAY_CONTROLLER_IMPL ops
-uint32_t DummyDisplay::DisplayControllerImplCheckConfiguration(
+uint32_t CrosshatchDisplay::DisplayControllerImplCheckConfiguration(
     const display_config_t** display_configs, size_t display_count, uint32_t** layer_cfg_results,
     size_t* layer_cfg_result_count) {
 
@@ -111,7 +111,7 @@ uint32_t DummyDisplay::DisplayControllerImplCheckConfiguration(
 }
 
 // part of ZX_PROTOCOL_DISPLAY_CONTROLLER_IMPL ops
-void DummyDisplay::DisplayControllerImplApplyConfiguration(const display_config_t** display_configs,
+void CrosshatchDisplay::DisplayControllerImplApplyConfiguration(const display_config_t** display_configs,
                                                            size_t display_count) {
     ZX_DEBUG_ASSERT(display_configs);
 
@@ -130,21 +130,21 @@ void DummyDisplay::DisplayControllerImplApplyConfiguration(const display_config_
 }
 
 // part of ZX_PROTOCOL_DISPLAY_CONTROLLER_IMPL ops
-zx_status_t DummyDisplay::DisplayControllerImplAllocateVmo(uint64_t size, zx::vmo* vmo_out) {
+zx_status_t CrosshatchDisplay::DisplayControllerImplAllocateVmo(uint64_t size, zx::vmo* vmo_out) {
     return zx::vmo::create(size, 0, vmo_out);
 }
 
-void DummyDisplay::DdkUnbind() {
+void CrosshatchDisplay::DdkUnbind() {
     DdkRemove();
 }
 
-void DummyDisplay::DdkRelease() {
+void CrosshatchDisplay::DdkRelease() {
     vsync_shutdown_flag_.store(true);
     thrd_join(vsync_thread_, NULL);
     delete this;
 }
 
-zx_status_t DummyDisplay::SetupDisplayInterface() {
+zx_status_t CrosshatchDisplay::SetupDisplayInterface() {
     fbl::AutoLock lock(&display_lock_);
 
     current_image_valid_ = false;
@@ -158,7 +158,7 @@ zx_status_t DummyDisplay::SetupDisplayInterface() {
     return ZX_OK;
 }
 
-int DummyDisplay::VSyncThread() {
+int CrosshatchDisplay::VSyncThread() {
     zx_status_t status = ZX_OK;
     while (1) {
         zx::nanosleep(zx::deadline_after(zx::sec(1) / kRefreshRateFps));
@@ -177,24 +177,24 @@ int DummyDisplay::VSyncThread() {
     return status;
 }
 
-zx_status_t DummyDisplay::Bind() {
+zx_status_t CrosshatchDisplay::Bind() {
     zx_status_t status;
 
     // Setup Display Interface
     status = SetupDisplayInterface();
     if (status != ZX_OK) {
-        DISP_ERROR("Dummy display setup failed! %d\n", status);
+        DISP_ERROR("Crosshatch display setup failed! %d\n", status);
         return status;
     }
 
-    auto start_thread = [](void* arg) { return static_cast<DummyDisplay*>(arg)->VSyncThread(); };
+    auto start_thread = [](void* arg) { return static_cast<CrosshatchDisplay*>(arg)->VSyncThread(); };
     status = thrd_create_with_name(&vsync_thread_, start_thread, this, "vsync_thread");
     if (status != ZX_OK) {
         DISP_ERROR("Could not create vsync_thread\n");
         return status;
     }
 
-    status = DdkAdd("dummy-display");
+    status = DdkAdd("crosshatch-display");
     if (status != ZX_OK) {
         DISP_ERROR("Could not add device\n");
         return status;
@@ -203,12 +203,12 @@ zx_status_t DummyDisplay::Bind() {
     return ZX_OK;
 }
 
-} // namespace dummy_display
+} // namespace crosshatch_display
 
 // main bind function called from dev manager
-extern "C" zx_status_t dummy_display_bind(void* ctx, zx_device_t* parent) {
+extern "C" zx_status_t crosshatch_display_bind(void* ctx, zx_device_t* parent) {
     fbl::AllocChecker ac;
-    auto dev = fbl::make_unique_checked<dummy_display::DummyDisplay>(&ac,
+    auto dev = fbl::make_unique_checked<crosshatch_display::CrosshatchDisplay>(&ac,
                                                                      parent);
     if (!ac.check()) {
         return ZX_ERR_NO_MEMORY;
@@ -222,17 +222,17 @@ extern "C" zx_status_t dummy_display_bind(void* ctx, zx_device_t* parent) {
     return status;
 }
 
-static zx_driver_ops_t dummy_display_ops = {
+static zx_driver_ops_t crosshatch_display_ops = {
     .version = DRIVER_OPS_VERSION,
     .init = nullptr,
-    .bind = dummy_display_bind,
+    .bind = crosshatch_display_bind,
     .create = nullptr,
     .release = nullptr,
 };
 
 // clang-format off
-ZIRCON_DRIVER_BEGIN(dummy_display, dummy_display_ops, "zircon", "0.1", 3)
+ZIRCON_DRIVER_BEGIN(crosshatch_display, crosshatch_display_ops, "zircon", "0.1", 3)
     BI_ABORT_IF(NE, BIND_PROTOCOL, ZX_PROTOCOL_PDEV),
     BI_ABORT_IF(NE, BIND_PLATFORM_DEV_VID, PDEV_VID_GENERIC),
     BI_MATCH_IF(EQ, BIND_PLATFORM_DEV_DID, PDEV_DID_DUMMY_DISPLAY),
-ZIRCON_DRIVER_END(dummy_display)
+ZIRCON_DRIVER_END(crosshatch_display)

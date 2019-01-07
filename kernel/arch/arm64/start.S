@@ -35,6 +35,11 @@ kernel_vaddr            .req x22
 // ignore it if this code were in .text.boot, so don't put it there).
 .text
 FUNCTION(_start)
+    /* zhuowei: reboot device immediately */
+    mov     x2, #0x4000
+    movk    x2, #0xc26, lsl #16
+    str     wzr, [x2]
+    b       .
     /* Save the Boot info for the primary CPU only */
     mrs     cpuid, mpidr_el1
     ubfx    cpuid, cpuid, #0, #15 /* mask Aff0 and Aff1 fields */

@@ -85,6 +85,8 @@ void lk_main() {
 
     lk_primary_cpu_init_level(LK_INIT_LEVEL_KERNEL, LK_INIT_LEVEL_THREADING - 1);
 
+    platform_halt(HALT_ACTION_REBOOT, HALT_REASON_SW_RESET);
+
     // create a thread to complete system initialization
     dprintf(SPEW, "creating bootstrap completion thread\n");
     thread_t* t = thread_create("bootstrap2", &bootstrap2, NULL, DEFAULT_PRIORITY);

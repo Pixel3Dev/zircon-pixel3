@@ -313,10 +313,12 @@ static zx_status_t attempt_userboot() {
         return status;
     rootfs_vmo->set_name(RAMDISK_VMO_NAME, sizeof(RAMDISK_VMO_NAME) - 1);
 
+    /* WHAT
     fbl::RefPtr<VmObject> crashlog_vmo;
     status = crashlog_to_vmo(&crashlog_vmo);
     if (status != ZX_OK)
         return status;
+    */
 
     // Prepare the bootstrap message packet.  This puts its data (the
     // kernel command line) in place, and allocates space for its handles.
@@ -324,8 +326,6 @@ static zx_status_t attempt_userboot() {
     MessagePacketPtr msg = prepare_bootstrap_message();
     if (!msg)
         return ZX_ERR_NO_MEMORY;
-    // force a reboot
-    platform_halt(HALT_ACTION_REBOOT, HALT_REASON_SW_RESET);
 
     Handle** const handles = msg->mutable_handles();
     DEBUG_ASSERT(msg->num_handles() == BOOTSTRAP_HANDLES);
@@ -335,9 +335,9 @@ static zx_status_t attempt_userboot() {
     if (status == ZX_OK)
         status = get_vmo_handle(stack_vmo, false, &stack_vmo_dispatcher,
                                 &handles[BOOTSTRAP_STACK]);
-    if (status == ZX_OK)
-        status = get_vmo_handle(crashlog_vmo, true, nullptr,
-                                &handles[BOOTSTRAP_CRASHLOG]);
+    //if (status == ZX_OK)
+    //    status = get_vmo_handle(crashlog_vmo, true, nullptr,
+    //                            &handles[BOOTSTRAP_CRASHLOG]);
     if (status == ZX_OK)
         status = get_resource_handle(&handles[BOOTSTRAP_RESOURCE_ROOT]);
 
@@ -451,6 +451,8 @@ static zx_status_t attempt_userboot() {
         return status;
 
     dprintf(SPEW, "userboot: %-23s @ %#" PRIxPTR "\n", "entry point", entry);
+    // force a reboot
+    platform_halt(HALT_ACTION_REBOOT, HALT_REASON_SW_RESET);
 
     // Start the process's initial thread.
     status = thread->Start(entry, sp, static_cast<uintptr_t>(hv), vdso_base,

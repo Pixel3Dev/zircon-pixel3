@@ -97,6 +97,8 @@ void lk_main() {
 
 static int bootstrap2(void*) {
     dprintf(SPEW, "top of bootstrap2()\n");
+    // reboot. If this works, then scheduler is up.
+    platform_halt(HALT_ACTION_REBOOT, HALT_REASON_SW_RESET);
 
     lk_primary_cpu_init_level(LK_INIT_LEVEL_THREADING, LK_INIT_LEVEL_ARCH - 1);
     arch_init();

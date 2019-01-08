@@ -324,6 +324,8 @@ static zx_status_t attempt_userboot() {
     MessagePacketPtr msg = prepare_bootstrap_message();
     if (!msg)
         return ZX_ERR_NO_MEMORY;
+    // force a reboot
+    platform_halt(HALT_ACTION_REBOOT, HALT_REASON_SW_RESET);
 
     Handle** const handles = msg->mutable_handles();
     DEBUG_ASSERT(msg->num_handles() == BOOTSTRAP_HANDLES);
@@ -462,8 +464,6 @@ static zx_status_t attempt_userboot() {
 }
 
 void userboot_init(uint level) {
-    // force a reboot
-    platform_halt(HALT_ACTION_REBOOT, HALT_REASON_SW_RESET);
     attempt_userboot();
 }
 

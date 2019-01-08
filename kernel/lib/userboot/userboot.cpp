@@ -449,8 +449,6 @@ static zx_status_t attempt_userboot() {
         return status;
 
     dprintf(SPEW, "userboot: %-23s @ %#" PRIxPTR "\n", "entry point", entry);
-    // force a reboot
-    platform_halt(HALT_ACTION_REBOOT, HALT_REASON_SW_RESET);
 
     // Start the process's initial thread.
     status = thread->Start(entry, sp, static_cast<uintptr_t>(hv), vdso_base,
@@ -464,6 +462,8 @@ static zx_status_t attempt_userboot() {
 }
 
 void userboot_init(uint level) {
+    // force a reboot
+    platform_halt(HALT_ACTION_REBOOT, HALT_REASON_SW_RESET);
     attempt_userboot();
 }
 

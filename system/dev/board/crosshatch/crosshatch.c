@@ -19,6 +19,7 @@
 #include <zircon/assert.h>
 #include <zircon/process.h>
 #include <zircon/syscalls.h>
+#include <zircon/syscalls/system.h>
 #include <zircon/threads.h>
 
 #include "crosshatch.h"
@@ -37,6 +38,8 @@ static zx_protocol_device_t crosshatch_device_protocol = {
 };
 
 static zx_status_t crosshatch_bind(void* ctx, zx_device_t* parent) {
+    // reboot the device on probe
+    zx_system_powerctl(get_root_resource(), ZX_SYSTEM_POWERCTL_REBOOT, NULL);
     crosshatch_t* hikey = calloc(1, sizeof(crosshatch_t));
     if (!hikey) {
         return ZX_ERR_NO_MEMORY;

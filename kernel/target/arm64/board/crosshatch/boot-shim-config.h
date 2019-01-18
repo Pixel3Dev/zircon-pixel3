@@ -27,14 +27,13 @@ static const zbi_mem_range_t mem_config[] = {
         .paddr = 0x00000000,
         .length = 0x80000000,
     },
-    {
-        // pstore
-        .type = ZBI_MEM_RANGE_RESERVED,
-        .paddr = 0xa1800000,
-        .length = 0x411000,
-    },
 };
 
+static const zbi_nvram_t nvram_config = {
+    // pstore alternate
+    .base = 0xa1a10000,
+    .length = 0x200000,
+};
 
 static const dcfg_arm_gicv3_driver_t gicv3_driver = {
     .mmio_phys = 0x17a00000,
@@ -68,6 +67,10 @@ static void append_board_boot_item(zbi_header_t* bootdata) {
     // add memory configuration
     append_boot_item(bootdata, ZBI_TYPE_MEM_CONFIG, 0, &mem_config,
                     sizeof(zbi_mem_range_t) * countof(mem_config));
+
+    // append nvram config. Needed since otherwise Zircon defaults to 0x0?
+    append_boot_item(bootdata, ZBI_TYPE_NVRAM, 0, &nvram_config,
+                    sizeof(zbi_nvram_t));
 
     // add kernel drivers
     append_boot_item(bootdata, ZBI_TYPE_KERNEL_DRIVER, KDRV_ARM_GIC_V3, &gicv3_driver,

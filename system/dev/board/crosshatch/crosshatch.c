@@ -63,6 +63,10 @@ static zx_status_t crosshatch_bind(void* ctx, zx_device_t* parent) {
         goto fail;
     }
 
+    if ((status = crosshatch_add_devices(hikey)) != ZX_OK) {
+        zxlogf(WARN, "crosshatch_add_devices failed %d\n", status);
+    }
+
     return ZX_OK;
 
 fail:

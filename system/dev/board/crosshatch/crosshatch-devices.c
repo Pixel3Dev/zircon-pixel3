@@ -22,7 +22,7 @@ static const pbus_mmio_t dsi_mmios[] = {
 static const pbus_dev_t dummy_display_dev = {
     .name = "dummy-display",
     .vid = PDEV_VID_GOOGLE,
-    .did = PDEV_DID_DUMMY_DISPLAY,
+    .did = PDEV_DID_CROSSHATCH_DISPLAY,
 };
 
 zx_status_t crosshatch_add_devices(crosshatch_t* hikey) {

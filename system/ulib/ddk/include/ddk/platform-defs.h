@@ -68,6 +68,7 @@ __BEGIN_CDECLS;
 #define PDEV_DID_GAUSS_I2C_TEST     3
 #define PDEV_DID_GAUSS_LED          4
 #define PDEV_DID_ASTRO_GOODIXTOUCH  5
+#define PDEV_DID_CROSSHATCH_DISPLAY 3333
 
 // Khadas
 #define PDEV_VID_KHADAS             4

@@ -15,7 +15,7 @@ namespace {
 // List of supported pixel formats
 zx_pixel_format_t kSupportedPixelFormats[] = {ZX_PIXEL_FORMAT_RGB_x888};
 // Arbitrary dimensions - the same as astro.
-constexpr uint32_t kWidth = 1400;
+constexpr uint32_t kWidth = 1440;
 constexpr uint32_t kHeight = 2960;
 
 constexpr uint64_t kDisplayId = 1;
@@ -38,7 +38,7 @@ void CrosshatchDisplay::PopulateAddedDisplayArgs(added_display_args_t* args) {
 // part of ZX_PROTOCOL_DISPLAY_CONTROLLER_IMPL ops
 uint32_t CrosshatchDisplay::DisplayControllerImplComputeLinearStride(uint32_t width,
                                                                 zx_pixel_format_t format) {
-    return ROUNDUP(width, 32 / ZX_PIXEL_FORMAT_BYTES(format));
+    return width;
 }
 
 // part of ZX_PROTOCOL_DISPLAY_CONTROLLER_IMPL ops

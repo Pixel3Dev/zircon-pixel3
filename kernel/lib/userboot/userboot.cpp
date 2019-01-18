@@ -313,12 +313,10 @@ static zx_status_t attempt_userboot() {
         return status;
     rootfs_vmo->set_name(RAMDISK_VMO_NAME, sizeof(RAMDISK_VMO_NAME) - 1);
 
-    /* WHAT
     fbl::RefPtr<VmObject> crashlog_vmo;
     status = crashlog_to_vmo(&crashlog_vmo);
     if (status != ZX_OK)
         return status;
-    */
 
     // Prepare the bootstrap message packet.  This puts its data (the
     // kernel command line) in place, and allocates space for its handles.
@@ -335,9 +333,9 @@ static zx_status_t attempt_userboot() {
     if (status == ZX_OK)
         status = get_vmo_handle(stack_vmo, false, &stack_vmo_dispatcher,
                                 &handles[BOOTSTRAP_STACK]);
-    //if (status == ZX_OK)
-    //    status = get_vmo_handle(crashlog_vmo, true, nullptr,
-    //                            &handles[BOOTSTRAP_CRASHLOG]);
+    if (status == ZX_OK)
+        status = get_vmo_handle(crashlog_vmo, true, nullptr,
+                                &handles[BOOTSTRAP_CRASHLOG]);
     if (status == ZX_OK)
         status = get_resource_handle(&handles[BOOTSTRAP_RESOURCE_ROOT]);
 

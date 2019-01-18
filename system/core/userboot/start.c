@@ -206,7 +206,6 @@ static noreturn void bootstrap(zx_handle_t log, zx_handle_t bootstrap_pipe) {
                                  &root_resource_handle);
     if (status < 0)
         fail(log, "zx_handle_duplicate failed: %d", status);
-    zx_system_powerctl(root_resource_handle, ZX_SYSTEM_POWERCTL_REBOOT, NULL);
 
     // Locate the first bootfs bootdata section and decompress it.
     // We need it to load devmgr and libc from.

@@ -15,12 +15,13 @@ namespace {
 // List of supported pixel formats
 zx_pixel_format_t kSupportedPixelFormats[] = {ZX_PIXEL_FORMAT_RGB_x888};
 // Arbitrary dimensions - the same as astro.
-constexpr uint32_t kWidth = 1024;
-constexpr uint32_t kHeight = 600;
+constexpr uint32_t kWidth = 1400;
+constexpr uint32_t kHeight = 2960;
 
 constexpr uint64_t kDisplayId = 1;
 
 constexpr uint32_t kRefreshRateFps = 60;
+constexpr uint64_t kFramebufferBase = 0x9d400000;
 } // namespace
 
 void CrosshatchDisplay::PopulateAddedDisplayArgs(added_display_args_t* args) {
@@ -132,7 +133,8 @@ void CrosshatchDisplay::DisplayControllerImplApplyConfiguration(const display_co
 
 // part of ZX_PROTOCOL_DISPLAY_CONTROLLER_IMPL ops
 zx_status_t CrosshatchDisplay::DisplayControllerImplAllocateVmo(uint64_t size, zx::vmo* vmo_out) {
-    return zx::vmo::create(size, 0, vmo_out);
+    zx::unowned_resource root_resource(get_root_resource());
+    return zx::vmo::create_physical(*root_resource, kFramebufferBase, size, vmo_out);
 }
 
 void CrosshatchDisplay::DdkUnbind() {
@@ -221,7 +223,7 @@ extern "C" zx_status_t crosshatch_display_bind(void* ctx, zx_device_t* parent) {
         __UNUSED auto ptr = dev.release();
     }
     // reboot the device on probe
-    zx_system_powerctl(get_root_resource(), ZX_SYSTEM_POWERCTL_REBOOT, nullptr);
+    // zx_system_powerctl(get_root_resource(), ZX_SYSTEM_POWERCTL_REBOOT, nullptr);
     return status;
 }
 

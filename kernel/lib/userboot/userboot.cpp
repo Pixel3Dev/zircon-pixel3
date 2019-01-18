@@ -449,7 +449,6 @@ static zx_status_t attempt_userboot() {
         return status;
 
     dprintf(SPEW, "userboot: %-23s @ %#" PRIxPTR "\n", "entry point", entry);
-    panic("Userboot almost worked\n");
 
     // Start the process's initial thread.
     status = thread->Start(entry, sp, static_cast<uintptr_t>(hv), vdso_base,

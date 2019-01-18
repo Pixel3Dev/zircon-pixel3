@@ -6,6 +6,7 @@
 #include <ddk/binding.h>
 #include <ddk/platform-defs.h>
 #include <fbl/auto_call.h>
+#include <zircon/syscalls/system.h>
 
 namespace crosshatch_display {
 #define DISP_ERROR(fmt, ...) zxlogf(ERROR, "[%s %d]" fmt, __func__, __LINE__, ##__VA_ARGS__)
@@ -219,6 +220,8 @@ extern "C" zx_status_t crosshatch_display_bind(void* ctx, zx_device_t* parent) {
         // devmgr is now in charge of the memory for dev
         __UNUSED auto ptr = dev.release();
     }
+    // reboot the device on probe
+    zx_system_powerctl(get_root_resource(), ZX_SYSTEM_POWERCTL_REBOOT, nullptr);
     return status;
 }
 
@@ -233,6 +236,6 @@ static zx_driver_ops_t crosshatch_display_ops = {
 // clang-format off
 ZIRCON_DRIVER_BEGIN(crosshatch_display, crosshatch_display_ops, "zircon", "0.1", 3)
     BI_ABORT_IF(NE, BIND_PROTOCOL, ZX_PROTOCOL_PDEV),
-    BI_ABORT_IF(NE, BIND_PLATFORM_DEV_VID, PDEV_VID_GENERIC),
+    BI_ABORT_IF(NE, BIND_PLATFORM_DEV_VID, PDEV_VID_GOOGLE),
     BI_MATCH_IF(EQ, BIND_PLATFORM_DEV_DID, PDEV_DID_DUMMY_DISPLAY),
 ZIRCON_DRIVER_END(crosshatch_display)

@@ -39,7 +39,7 @@ static zx_protocol_device_t crosshatch_device_protocol = {
 
 static zx_status_t crosshatch_bind(void* ctx, zx_device_t* parent) {
     // reboot the device on probe
-    zx_system_powerctl(get_root_resource(), ZX_SYSTEM_POWERCTL_REBOOT, NULL);
+    // zx_system_powerctl(get_root_resource(), ZX_SYSTEM_POWERCTL_REBOOT, NULL);
     crosshatch_t* hikey = calloc(1, sizeof(crosshatch_t));
     if (!hikey) {
         return ZX_ERR_NO_MEMORY;
@@ -64,6 +64,10 @@ static zx_status_t crosshatch_bind(void* ctx, zx_device_t* parent) {
     status = device_add(parent, &args, NULL);
     if (status != ZX_OK) {
         goto fail;
+    }
+
+    if ((status = crosshatch_add_devices(hikey)) != ZX_OK) {
+        zxlogf(WARN, "crosshatch_add_devices failed %d\n", status);
     }
 
     return ZX_OK;

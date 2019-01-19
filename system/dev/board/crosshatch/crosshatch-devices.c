@@ -46,7 +46,7 @@ static const pbus_bti_t dwc3_btis[] = {
     },
 };
 
-static usb_mode_t dwc3_mode = USB_MODE_HOST;
+static usb_mode_t dwc3_mode = USB_MODE_PERIPHERAL;
 
 static const pbus_metadata_t dwc3_metadata[] = {
     {

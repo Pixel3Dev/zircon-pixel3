@@ -81,6 +81,7 @@ void dwc3_cmd_ep_start_transfer(dwc3_t* dwc, unsigned ep_num, zx_paddr_t trb_phy
         .set_PARAMETER(static_cast<uint32_t>(trb_phys))
         .WriteTo(mmio);
     DEPCMDPAR2::Get(ep_num).FromValue(0).WriteTo(mmio);
+    return; // hack
     DEPCMD::Get(ep_num)
         .FromValue(0)
         .set_CMDTYP(DEPCMD::DEPSTRTXFER)

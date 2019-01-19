@@ -501,7 +501,6 @@ LK_INIT_HOOK(platform_init_pre_thread, platform_init_pre_thread,
              LK_INIT_LEVEL_THREADING - 1);
 
 void platform_init(void) {
-    return; // Disable MP
     if (use_topology) {
         topology_cpu_init();
     } else {

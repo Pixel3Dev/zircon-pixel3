@@ -3,17 +3,50 @@
 // found in the LICENSE file.
 
 #define HAS_DEVICE_TREE 1
+#define CLUSTER(power) \
+    { \
+        .entity_type = ZBI_TOPOLOGY_ENTITY_CLUSTER, \
+        .parent_index = ZBI_TOPOLOGY_NO_PARENT, \
+        .entity = { \
+            .cluster = { \
+                .performance_class = power, \
+            } \
+        } \
+    }
+#define PROCESSOR(index, parent, theflags) \
+    { \
+        .entity_type = ZBI_TOPOLOGY_ENTITY_PROCESSOR, \
+        .parent_index = parent, \
+        .entity = { \
+            .processor = { \
+                .logical_ids = {index}, \
+                .logical_id_count = 1, \
+                .flags = theflags, \
+                .architecture = ZBI_TOPOLOGY_ARCH_ARM, \
+                .architecture_info = { \
+                    .arm = { \
+                        .cluster_1_id = index, \
+                        .cpu_id = 0, \
+                        .gic_id = index, \
+                    } \
+                } \
+            } \
+        } \
+    }
 
-static const zbi_cpu_config_t cpu_config = {
-    .cluster_count = 2,
-    .clusters = {
-        {
-            .cpu_count = 4,
-        },
-        {
-            .cpu_count = 4,
-        },
-    },
+static const zbi_topology_node_t topology_config[] = {
+    CLUSTER(0), //0
+    PROCESSOR(0, 0, ZBI_TOPOLOGY_PROCESSOR_PRIMARY),
+/* multiprocessor doesn't work
+    PROCESSOR(1, 0, 0),
+    PROCESSOR(2, 0, 0),
+    PROCESSOR(3, 0, 0),
+    CLUSTER(1), // 5
+    PROCESSOR(4, 5, 0),
+    PROCESSOR(5, 5, 0),
+    PROCESSOR(6, 5, 0),
+    PROCESSOR(7, 5, 0),
+*/
 };
 
 static const zbi_mem_range_t mem_config[] = {
@@ -60,9 +93,9 @@ static const zbi_platform_id_t platform_id = {
 
 static void append_board_boot_item(zbi_header_t* bootdata) {
     // add CPU configuration
-    append_boot_item(bootdata, ZBI_TYPE_CPU_CONFIG, 0, &cpu_config,
-                    sizeof(zbi_cpu_config_t) +
-                    sizeof(zbi_cpu_cluster_t) * cpu_config.cluster_count);
+    append_boot_item(bootdata, ZBI_TYPE_CPU_TOPOLOGY, sizeof(zbi_topology_node_t),
+                    &topology_config,
+                    sizeof(zbi_topology_node_t) * countof(topology_config));
 
     // add memory configuration
     append_boot_item(bootdata, ZBI_TYPE_MEM_CONFIG, 0, &mem_config,

@@ -839,10 +839,12 @@ int main(int argc, char** argv) {
 
     zx::channel::create(0, &g_handles.appmgr_client, &g_handles.appmgr_server);
 
+/*
     char** e = environ;
     while (*e) {
         printf("cmdline: %s\n", *e++);
     }
+*/
 
     status = svchost_start(require_system);
     if (status != ZX_OK) {

@@ -81,17 +81,17 @@ void dwc3_cmd_ep_start_transfer(dwc3_t* dwc, unsigned ep_num, zx_paddr_t trb_phy
         .set_PARAMETER(static_cast<uint32_t>(trb_phys))
         .WriteTo(mmio);
     DEPCMDPAR2::Get(ep_num).FromValue(0).WriteTo(mmio);
-    return; // hack
+
     DEPCMD::Get(ep_num)
         .FromValue(0)
         .set_CMDTYP(DEPCMD::DEPSTRTXFER)
-        .set_CMDACT(1)
-        .set_CMDIOC(1)
+    //    .set_CMDACT(1)
+    //    .set_CMDIOC(1)
         .WriteTo(mmio);
 
-    while (DEPCMD::Get(ep_num).ReadFrom(mmio).CMDACT()) {
-        usleep(1000);
-    }
+    //while (DEPCMD::Get(ep_num).ReadFrom(mmio).CMDACT()) {
+    //    usleep(1000);
+    //}
 }
 
 void dwc3_cmd_ep_end_transfer(dwc3_t* dwc, unsigned ep_num) {

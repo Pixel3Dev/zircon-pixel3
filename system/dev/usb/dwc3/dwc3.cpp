@@ -112,6 +112,8 @@ static void dwc3_start_peripheral_mode(dwc3_t* dwc) {
 
     dwc->lock.Release();
 
+    // crosshatch crashes in here
+
     dwc3_ep0_start(dwc);
 
     dwc->lock.Acquire();

@@ -108,7 +108,8 @@ void dwc3_ep_start_transfer(dwc3_t* dwc, unsigned ep_num, unsigned type, zx_padd
                               sizeof(*trb));
     }
 
-    dwc3_cmd_ep_start_transfer(dwc, ep_num, dwc3_ep_trb_phys(ep, trb));
+    // no pls
+    //dwc3_cmd_ep_start_transfer(dwc, ep_num, dwc3_ep_trb_phys(ep, trb));
 }
 
 static void dwc3_ep_queue_next_locked(dwc3_t* dwc, dwc3_endpoint_t* ep) {

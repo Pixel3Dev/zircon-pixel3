@@ -23,6 +23,7 @@ static const pbus_mmio_t dsi_mmios[] = {
 #define MMIO_USB3OTG_BASE 0xa600000
 #define MMIO_USB3OTG_LENGTH 0xcd00
 #define IRQ_USB3 (32 + 133) // GIC_SPI + 133
+#define BTI_USB_DWC3 1
 
 static const pbus_mmio_t dwc3_mmios[] = {
     {
@@ -38,16 +39,12 @@ static const pbus_irq_t dwc3_irqs[] = {
     },
 };
 
-/*
-
 static const pbus_bti_t dwc3_btis[] = {
     {
         .iommu_index = 0,
         .bti_id = BTI_USB_DWC3,
     },
 };
-
-*/
 
 static usb_mode_t dwc3_mode = USB_MODE_HOST;
 
@@ -68,8 +65,8 @@ static const pbus_dev_t dwc3_usb = {
     .mmio_count = countof(dwc3_mmios),
     .irq_list = dwc3_irqs,
     .irq_count = countof(dwc3_irqs),
-    //.bti_list = dwc3_btis,
-    //.bti_count = countof(dwc3_btis),
+    .bti_list = dwc3_btis,
+    .bti_count = countof(dwc3_btis),
     .metadata_list = dwc3_metadata,
     .metadata_count = countof(dwc3_metadata),
 };

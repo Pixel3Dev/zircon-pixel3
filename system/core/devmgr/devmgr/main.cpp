@@ -797,9 +797,11 @@ zx::channel fs_clone(const char* path) {
 
 int main(int argc, char** argv) {
     printf("devmgr: main()\n");
+    /*
     for (char** e = environ; *e != nullptr; e++) {
         printf("cmdline: %s\n", *e);
     }
+    */
 
     devmgr::DevmgrArgs args;
     ParseArgs(argc, argv, &args);

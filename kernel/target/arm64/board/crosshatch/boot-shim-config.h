@@ -4,14 +4,12 @@
 
 #define HAS_DEVICE_TREE 1
 
+// secondary CPUs currently won't start.
 static const zbi_cpu_config_t cpu_config = {
-    .cluster_count = 2,
+    .cluster_count = 1,
     .clusters = {
         {
-            .cpu_count = 4,
-        },
-        {
-            .cpu_count = 4,
+            .cpu_count = 1,
         },
     },
 };

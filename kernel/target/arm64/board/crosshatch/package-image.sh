@@ -13,5 +13,5 @@ ZIRCON_DIR="${DIR}/../../../../.."
 SCRIPTS_DIR="${ZIRCON_DIR}/scripts"
 
 "${SCRIPTS_DIR}/package-image.sh" -a -b crosshatch \
-    -d "$ZIRCON_DIR/kernel/target/arm64/dtb/crosshatch.dtb" -D append \
+    -d "$ZIRCON_DIR/kernel/target/arm64/board/crosshatch/crosshatch.dtb" -D append \
     -g -M 0x80000000 $@

@@ -14,13 +14,13 @@ namespace crosshatch_display {
 namespace {
 // List of supported pixel formats
 zx_pixel_format_t kSupportedPixelFormats[] = {ZX_PIXEL_FORMAT_RGB_x888};
-// Arbitrary dimensions - the same as astro.
 constexpr uint32_t kWidth = 1440;
 constexpr uint32_t kHeight = 2960;
 
 constexpr uint64_t kDisplayId = 1;
 
 constexpr uint32_t kRefreshRateFps = 60;
+// crosshatch's bootloader sets up the framebuffer here.
 constexpr uint64_t kFramebufferBase = 0x9d400000;
 } // namespace
 

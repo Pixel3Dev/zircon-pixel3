@@ -25,10 +25,10 @@
 
 
 static void crosshatch_release(void* ctx) {
-    crosshatch_t* hikey = ctx;
+    crosshatch_t* crosshatch = ctx;
 
-    zx_handle_close(hikey->bti_handle);
-    free(hikey);
+    zx_handle_close(crosshatch->bti_handle);
+    free(crosshatch);
 }
 
 static zx_protocol_device_t crosshatch_device_protocol = {
@@ -37,21 +37,21 @@ static zx_protocol_device_t crosshatch_device_protocol = {
 };
 
 static zx_status_t crosshatch_bind(void* ctx, zx_device_t* parent) {
-    crosshatch_t* hikey = calloc(1, sizeof(crosshatch_t));
-    if (!hikey) {
+    crosshatch_t* crosshatch = calloc(1, sizeof(crosshatch_t));
+    if (!crosshatch) {
         return ZX_ERR_NO_MEMORY;
     }
 
-    zx_status_t status = device_get_protocol(parent, ZX_PROTOCOL_PBUS, &hikey->pbus);
+    zx_status_t status = device_get_protocol(parent, ZX_PROTOCOL_PBUS, &crosshatch->pbus);
     if (status != ZX_OK) {
-        free(hikey);
+        free(crosshatch);
         return ZX_ERR_NOT_SUPPORTED;
     }
 
     device_add_args_t args = {
         .version = DEVICE_ADD_ARGS_VERSION,
         .name = "crosshatch",
-        .ctx = hikey,
+        .ctx = crosshatch,
         .ops = &crosshatch_device_protocol,
         // nothing should bind to this device
         // all interaction will be done via the pbus_interface_t
@@ -63,7 +63,7 @@ static zx_status_t crosshatch_bind(void* ctx, zx_device_t* parent) {
         goto fail;
     }
 
-    if ((status = crosshatch_add_devices(hikey)) != ZX_OK) {
+    if ((status = crosshatch_add_devices(crosshatch)) != ZX_OK) {
         zxlogf(WARN, "crosshatch_add_devices failed %d\n", status);
     }
 
@@ -71,7 +71,7 @@ static zx_status_t crosshatch_bind(void* ctx, zx_device_t* parent) {
 
 fail:
     zxlogf(ERROR, "crosshatch_bind failed %d\n", status);
-    crosshatch_release(hikey);
+    crosshatch_release(crosshatch);
     return status;
 }
 

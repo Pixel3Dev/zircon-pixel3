@@ -10,25 +10,16 @@
 
 #include "crosshatch.h"
 
-/*
-static const pbus_mmio_t dsi_mmios[] = {
-    {
-        .base = MMIO_DSI_BASE,
-        .length = MMIO_DSI_LENGTH,
-    },
-};
-*/
-
 static const pbus_dev_t dummy_display_dev = {
     .name = "dummy-display",
     .vid = PDEV_VID_GOOGLE,
     .did = PDEV_DID_CROSSHATCH_DISPLAY,
 };
 
-zx_status_t crosshatch_add_devices(crosshatch_t* hikey) {
+zx_status_t crosshatch_add_devices(crosshatch_t* crosshatch) {
     zx_status_t status;
 
-    if ((status = pbus_device_add(&hikey->pbus, &dummy_display_dev)) != ZX_OK) {
+    if ((status = pbus_device_add(&crosshatch->pbus, &dummy_display_dev)) != ZX_OK) {
         zxlogf(ERROR, "crosshatch_add_devices could not add dummy_display_dev: %d\n", status);
     }
 

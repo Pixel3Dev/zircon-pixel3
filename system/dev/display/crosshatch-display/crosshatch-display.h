@@ -30,7 +30,7 @@ class CrosshatchDisplay;
 using DeviceType = ddk::Device<CrosshatchDisplay, ddk::Unbindable>;
 
 class CrosshatchDisplay : public DeviceType,
-                     public ddk::DisplayControllerImplProtocol<CrosshatchDisplay, ddk::base_protocol> {
+                          public ddk::DisplayControllerImplProtocol<CrosshatchDisplay, ddk::base_protocol> {
 public:
     CrosshatchDisplay(zx_device_t* parent)
         : DeviceType(parent) {}

@@ -17,7 +17,7 @@ static const zbi_cpu_config_t cpu_config = {
 static const zbi_mem_range_t mem_config[] = {
     {
         .type = ZBI_MEM_RANGE_RAM,
-	.paddr = 0x80000000,
+        .paddr = 0x80000000,
         .length = 0xfe0a0000, // 4GB
     },
     {

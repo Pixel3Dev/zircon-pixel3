@@ -23,7 +23,6 @@
 
 #include "crosshatch.h"
 
-
 static void crosshatch_release(void* ctx) {
     crosshatch_t* crosshatch = ctx;
 

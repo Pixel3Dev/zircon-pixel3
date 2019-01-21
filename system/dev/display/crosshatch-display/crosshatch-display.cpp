@@ -37,7 +37,7 @@ void CrosshatchDisplay::PopulateAddedDisplayArgs(added_display_args_t* args) {
 
 // part of ZX_PROTOCOL_DISPLAY_CONTROLLER_IMPL ops
 uint32_t CrosshatchDisplay::DisplayControllerImplComputeLinearStride(uint32_t width,
-                                                                zx_pixel_format_t format) {
+                                                                     zx_pixel_format_t format) {
     return width;
 }
 
@@ -53,7 +53,7 @@ void CrosshatchDisplay::DisplayControllerImplSetDisplayControllerInterface(
 
 // part of ZX_PROTOCOL_DISPLAY_CONTROLLER_IMPL ops
 zx_status_t CrosshatchDisplay::DisplayControllerImplImportVmoImage(image_t* image, zx::vmo vmo,
-                                                              size_t offset) {
+                                                                   size_t offset) {
     zx_status_t status = ZX_OK;
 
     if (image->type != IMAGE_TYPE_SIMPLE || image->pixel_format != kSupportedPixelFormats[0]) {
@@ -114,7 +114,7 @@ uint32_t CrosshatchDisplay::DisplayControllerImplCheckConfiguration(
 
 // part of ZX_PROTOCOL_DISPLAY_CONTROLLER_IMPL ops
 void CrosshatchDisplay::DisplayControllerImplApplyConfiguration(const display_config_t** display_configs,
-                                                           size_t display_count) {
+                                                                size_t display_count) {
     ZX_DEBUG_ASSERT(display_configs);
 
     fbl::AutoLock lock(&display_lock_);
@@ -212,7 +212,7 @@ zx_status_t CrosshatchDisplay::Bind() {
 extern "C" zx_status_t crosshatch_display_bind(void* ctx, zx_device_t* parent) {
     fbl::AllocChecker ac;
     auto dev = fbl::make_unique_checked<crosshatch_display::CrosshatchDisplay>(&ac,
-                                                                     parent);
+                                                                               parent);
     if (!ac.check()) {
         return ZX_ERR_NO_MEMORY;
     }

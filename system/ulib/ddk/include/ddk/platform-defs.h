@@ -61,12 +61,14 @@ __BEGIN_CDECLS;
 #define PDEV_PID_SHERLOCK           5
 #define PDEV_PID_CLEO               6
 #define PDEV_PID_EAGLE              7
+#define PDEV_PID_CROSSHATCH         3333
 
 #define PDEV_DID_GAUSS_AUDIO_IN     1
 #define PDEV_DID_GAUSS_AUDIO_OUT    2
 #define PDEV_DID_GAUSS_I2C_TEST     3
 #define PDEV_DID_GAUSS_LED          4
 #define PDEV_DID_ASTRO_GOODIXTOUCH  5
+#define PDEV_DID_CROSSHATCH_DISPLAY 3333
 
 // Khadas
 #define PDEV_VID_KHADAS             4

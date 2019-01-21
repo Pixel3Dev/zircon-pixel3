@@ -27,7 +27,6 @@
 static void crosshatch_release(void* ctx) {
     crosshatch_t* crosshatch = ctx;
 
-    zx_handle_close(crosshatch->bti_handle);
     free(crosshatch);
 }
 

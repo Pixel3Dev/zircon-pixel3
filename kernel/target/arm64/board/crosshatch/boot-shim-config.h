@@ -111,6 +111,16 @@ static const zbi_platform_id_t platform_id = {
     .board_name = "crosshatch",
 };
 
+static void smmuDisable(void) {
+    // sdm845 uses an ARM CoreLink MMU-500
+    const uint64_t kSmmuBase = 0x5040000;
+    const uint64_t kSMMU_sCR0 = 0;
+    const uint32_t kCLIENTPD = (1 << 0);
+    volatile uint32_t* ptr = (volatile uint32_t*)(kSmmuBase + kSMMU_sCR0);
+    // Setting the CLIENTPD bit in sCR0 disables SMMU
+    *ptr |= kCLIENTPD;
+}
+
 static void append_board_boot_item(zbi_header_t* bootdata) {
     // add CPU configuration
     append_boot_item(bootdata, ZBI_TYPE_CPU_CONFIG, 0, &cpu_config,
@@ -135,4 +145,9 @@ static void append_board_boot_item(zbi_header_t* bootdata) {
 
     // add platform ID
     append_boot_item(bootdata, ZBI_TYPE_PLATFORM_ID, 0, &platform_id, sizeof(platform_id));
+
+    // kludge: disable the SMMU.
+    // the bootloader leaves the SMMU enabled, but we don't currently
+    // support the SMMU. Without configuration, enabling USB causes a reboot.
+    smmuDisable();
 }

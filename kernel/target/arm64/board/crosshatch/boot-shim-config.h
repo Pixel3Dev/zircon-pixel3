@@ -113,7 +113,7 @@ static const zbi_platform_id_t platform_id = {
 
 static void smmuDisable(void) {
     // sdm845 uses an ARM CoreLink MMU-500
-    const uint64_t kSmmuBase = 0x5040000;
+    const uint64_t kSmmuBase = 0x15000000;
     const uint64_t kSMMU_sCR0 = 0;
     const uint32_t kCLIENTPD = (1 << 0);
     volatile uint32_t* ptr = (volatile uint32_t*)(kSmmuBase + kSMMU_sCR0);

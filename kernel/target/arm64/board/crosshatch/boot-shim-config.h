@@ -117,8 +117,9 @@ static void smmuDisable(void) {
     const uint64_t kSMMU_sCR0 = 0;
     const uint32_t kCLIENTPD = (1 << 0);
     volatile uint32_t* ptr = (volatile uint32_t*)(kSmmuBase + kSMMU_sCR0);
-    // Setting the CLIENTPD bit in sCR0 disables SMMU
-    *ptr |= kCLIENTPD;
+    // Set the CLIENTPD bit in sCR0 and zero out all other bits.
+    // This disables SMMU.
+    *ptr = kCLIENTPD;
 }
 
 static void append_board_boot_item(zbi_header_t* bootdata) {

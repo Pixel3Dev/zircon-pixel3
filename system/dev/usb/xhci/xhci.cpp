@@ -457,6 +457,7 @@ zx_status_t xhci_start(xhci_t* xhci) {
     uint32_t start_flags = USBCMD_RS | USBCMD_INTE | USBCMD_EWE;
     XHCI_SET32(usbcmd, start_flags, start_flags);
     xhci_wait_bits(usbsts, USBSTS_HCH, 0);
+    xhci_handle_root_hub_change(xhci);
 
     xhci_start_device_thread(xhci);
 
